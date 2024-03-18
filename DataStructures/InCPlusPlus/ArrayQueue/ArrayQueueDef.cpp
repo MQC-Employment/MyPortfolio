@@ -16,7 +16,7 @@ ArrayQueue<T>::ArrayQueue()
 template<class T>
 ArrayQueue<T>::~ArrayQueue(){
 
-    delete this->internalArrayQueue;
+    delete[] this->internalArrayQueue;
     this->numberOfElementsInQueue = 0;
     this->lengthOfQueue = 0;
 
@@ -123,7 +123,7 @@ void ArrayQueue<T>::resizeArray(){
 
     }
     
-    delete this->internalArrayQueue;
+    delete[] this->internalArrayQueue;
     this->internalArrayQueue = temporalNewArray;
 
 }
@@ -131,7 +131,7 @@ void ArrayQueue<T>::resizeArray(){
 template<class T>
 void ArrayQueue<T>::rearrangeArray(){
 
-    for (size_t iterador = 0; iterador < numberOfElementsInQueue; iterador++)
+    for (size_t iterador = 0; iterador < this->numberOfElementsInQueue; iterador++)
     {
         
         this->internalArrayQueue[iterador] = this->internalArrayQueue[iterador+1];
@@ -143,7 +143,7 @@ void ArrayQueue<T>::rearrangeArray(){
 template<class T>
 void ArrayQueue<T>::clearData(){
 
-    delete this->internalArrayQueue;
+    delete[] this->internalArrayQueue;
     this->lengthOfQueue = 0;
     this->numberOfElementsInQueue = 0;
 
