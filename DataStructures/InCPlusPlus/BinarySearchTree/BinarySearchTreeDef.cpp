@@ -13,7 +13,7 @@ BinarySearchTree<T>::BinarySearchTree()
 template<class T>
 BinarySearchTree<T>::~BinarySearchTree(){
 
-
+    recursiveCleartree(this->root);
 
 }
 
@@ -210,6 +210,19 @@ void BinarySearchTree<T>::inOrderRecursivePrint(Node<T>* currenNodeP){
         inOrderRecursivePrint(currenNodeP->getLeftChild());
         std::cout << currenNodeP->getData() << " ";
         inOrderRecursivePrint(currenNodeP->getRightChild());
+
+    }
+
+}
+
+template<class T>
+void BinarySearchTree<T>::recursiveCleartree(Node<T>* currentNodeP){
+
+    if(currentNodeP!=nullptr){
+
+        recursiveCleartree(currentNodeP->getLeftChild());
+        recursiveCleartree(currentNodeP->getRightChild());
+        delete currentNodeP;
 
     }
 

@@ -15,6 +15,7 @@ class BinarySearchTree{
     T recursiveRemove(Node<T>* currentNodeP, T valueToRemoveP, Node<T>* parentNodeOfCurrentNodeP);
     void inOrderRecursivePrint(Node<T>* currenNodeP);
     Node<T>* getSmallestNodeFromCurrentNode(Node<T>* currentNodeP);
+    void recursiveCleartree(Node<T>* currentNodeP);
 
     public:
 
