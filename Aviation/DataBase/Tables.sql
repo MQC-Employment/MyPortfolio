@@ -9,7 +9,7 @@ create table ApplicationUserRole(
     constraint ApplicationUserRole_RoleName_Unique unique (roleName)
 
 );
-/
+
 create table APIUserRole(
 
     internalAPIUserRoleID smallint not null,
@@ -21,7 +21,7 @@ create table APIUserRole(
     constraint APIUserRole_RoleName_Unique unique (roleName)
 
 );
-/
+
 create table APIUser(
 
     internalAPIUserID number not null,
@@ -38,7 +38,7 @@ create table APIUser(
     constraint APIUser_UserAPIKey_Unique unique (userAPIKey)
     
 );
-/
+
 create table ApplicationUser(
 
     internalApplicationUserID number not null,
@@ -58,7 +58,7 @@ create table ApplicationUser(
     constraint ApplicationUser_PhoneNumber_Unique unique(phoneNumber)
 
 );
-/
+
 create table APIUser_APIUserRole(
 
     internalAPIUserID number not null,
@@ -73,7 +73,7 @@ create table APIUser_APIUserRole(
     constraint APIUser_APIUserRole_RoleRelationID_Unique unique(roleRelationID)
 
 );
-/
+
 create table ApplicationUser_ApplicationUserRole(
 
     internalApplicationUserID number not null,
@@ -88,7 +88,7 @@ create table ApplicationUser_ApplicationUserRole(
     constraint ApplicationUser_ApplicationUserRole_RoleRelationID_Unique unique(roleRelationID)
 
 );
-/
+
 create table AircraftManufacturer(
 
     internalAircraftManufacturerID number not null,
@@ -104,17 +104,17 @@ create table AircraftManufacturer(
     constraint AircraftManufacturer_NumberOfEmployees_Check check (numberOfEmployees>=0 or numberOfEmployees is null)
     
 );
-/
+
 create table AircraftFamily(
 
-    aircraftFamilyNumberPerManufacturer number not null,
+    internalAircraftFamilyID number not null,
     internalAircraftManufacturerID number not null,
     aircraftFamilyID raw(16) not null,
     aircraftFamilyName varchar2(32) not null,
     introductionDate date null,
     smallDescription varchar2(1024) null,
     
-    constraint AircraftFamily_InternalAircraftFamilyID_PK primary key(internalAircraftManufacturerID,aircraftFamilyNumberPerManufacturer),
+    constraint AircraftFamily_InternalAircraftFamilyID_PK primary key(internalAircraftFamilyID),
     constraint AircraftFamily_AircraftFamilyID_Unique unique(aircraftFamilyID),
     constraint AircraftFamily_AircraftManufacturerInternalID_FK
     foreign key (internalAircraftManufacturerID) 
@@ -122,12 +122,11 @@ create table AircraftFamily(
     constraint AircraftFamily_AircraftFamilyName_Unique unique(aircraftFamilyName)
 
 );
-/
+
 create table Aircraft(
 
-    aircraftNumberPerAircraftFamily number not null,
-    aircraftFamilyNumberPerManufacturer number not null,
-    internalAircraftManufacturerID number not null,
+    internalAircraftID number not null,
+    internalAircraftFamilyID number not null,
     aircraftID raw(16) not null,
     aircraftName varchar2(32) not null,
     aircraftDescription varchar2(2048),
@@ -141,10 +140,10 @@ create table Aircraft(
     pricePerUnit decimal(14,2) null,
     discount decimal(4,2) null, 
     
-    constraint Aircraft_InternalAircraftID_PK primary key (internalAircraftManufacturerID,aircraftFamilyNumberPerManufacturer,aircraftNumberPerAircraftFamily),
+    constraint Aircraft_InternalAircraftID_PK primary key (internalAircraftID),
     constraint Aircraft_AircraftID_Unique unique (aircraftID),
     constraint Aircraft_InternalAircraftFamilyID_FK 
-    foreign key (internalAircraftManufacturerID,aircraftFamilyNumberPerManufacturer) references AircraftFamily(internalAircraftManufacturerID,aircraftFamilyNumberPerManufacturer),
+    foreign key (internalAircraftFamilyID) references AircraftFamily(internalAircraftFamilyID),
     constraint Aircraft_AircraftName_Unique unique (aircraftName),
     constraint Aircraft_MaxNumberOfSeats_Check check(maxNumberOfSeats>=0 or maxNumberOfSeats is null),
     constraint Aircraft_MaxFlyingRange_Check check (maxFlyingRange >=0 or maxFlyingRange is null),
@@ -154,68 +153,64 @@ create table Aircraft(
     constraint Aircraft_Discount_Check check (discount >=0 or discount is null)
 
 );
-/
-create table AircraftImages(
 
-    aircraftNumberPerAircraftFamily number not null,
-    aircraftFamilyNumberPerManufacturer number not null,
-    internalAircraftManufacturerID number not null,
+create table AircraftImage(
+
+    internalAirCraftImagineID number not null,
+    internalAircraftID number not null,
     imagineID raw(16) not null,
     imageURLRoute varchar2(2048) not null, 
 
     constraint AircraftImages_PK 
-    primary key(internalAircraftManufacturerID,aircraftFamilyNumberPerManufacturer,aircraftNumberPerAircraftFamily,imageURLRoute),
-    constraint AircraftImages_FK foreign key(internalAircraftManufacturerID,aircraftFamilyNumberPerManufacturer,aircraftNumberPerAircraftFamily)
-    references Aircraft(internalAircraftManufacturerID,aircraftFamilyNumberPerManufacturer,aircraftNumberPerAircraftFamily),
+    primary key(internalAirCraftImagineID),
+    constraint AircraftImages_FK foreign key(internalAircraftID)
+    references Aircraft(internalAircraftID),
     constraint AircraftImages_ImagineID_Unique unique(imagineID)
 
 );
-/
+
 create table Invoice(
 
-    invoiceNumberPerUser number not null,
-    invoiceID raw(16) not null,
+    internalInvoiceID int not null,
     internalApplicationUserID number not null,
+    invoiceID raw(16) not null,
     invoiceDescription varchar2(1024) not null,
     dateOfInvoice date not null,
     totalPrice decimal(14,2) not null,
     discountApplied decimal(4,2) null,
     
-    constraint Invoice_PK primary key (internalApplicationUserID,invoiceNumberPerUser),
-    constraint Invoice_InvoiceID_Unique unique(invoiceID),
+    constraint Invoice_PK primary key (internalInvoiceID),
     constraint Invoice_InternalApplicationUserID_PK foreign key(internalApplicationUserID)
-    references ApplicationUser(internalApplicationUserID)
+    references ApplicationUser(internalApplicationUserID),
+    constraint Invoice_InvoiceID_Unique unique(invoiceID)
 
 )partition by range(dateOfInvoice)
 interval(numtoyminterval(1,'month'))(
 
-    partition MonthlyPartition values less than (to_date('01/01/2024','DD/MM/YYYY'))
+    partition MonthlyPartition values less than (to_date('01012024','DDMMYYYY'))
 
 );
-/
+
 create table InvoiceDetail(
 
-    invoiceDetailNumberPerInvoice number not null,
-    invoiceNumberPerUser number not null,
-    internalApplicationUserID number not null,
-    aircraftNumberPerAircraftFamily number not null,
-    aircraftFamilyNumberPerManufacturer number not null,
-    internalAircraftManufacturerID number not null,
+    internalinvoiceDetailID number not null,
+    internalInvoiceID int not null,
+    internalAircraftID number not null,
     invoiceDetailID raw(16) not null,
     price decimal(14,2) null,
     discount decimal(4,2) null,
     
     constraint InvoiceDetail_PK 
-    primary key(internalApplicationUserID,invoiceNumberPerUser,invoiceDetailNumberPerInvoice),
-    constraint InvoiceDetail_Invoice_FK foreign key(internalApplicationUserID,invoiceNumberPerUser)
-    references Invoice(internalApplicationUserID,invoiceNumberPerUser),
+    primary key(internalinvoiceDetailID),
+    constraint InvoiceDetail_Invoice_FK foreign key(internalInvoiceID)
+    references Invoice(internalInvoiceID),
     constraint InvoiceDetail_Aircraft_FK 
-    foreign key(internalAircraftManufacturerID,aircraftFamilyNumberPerManufacturer,aircraftNumberPerAircraftFamily)
-    references Aircraft(internalAircraftManufacturerID,aircraftFamilyNumberPerManufacturer,aircraftNumberPerAircraftFamily),
+    foreign key(internalAircraftID)
+    references Aircraft(internalAircraftID),
     constraint InvoiceDetail_InvoiceDetailID_Unique unique(invoiceDetailID)
 
 );
-/
+
 create table AuditTable(
 
     internalEventID number not null,

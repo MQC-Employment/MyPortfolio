@@ -47,16 +47,17 @@ namespace AviationWEBAPI.Controllers
         /// 
         /// </remarks>
         /// <param name="apiUserEmailP">The email of the registered API user.</param>
+        /// <param name="apiUserPassword">The password of the registered API user.</param>
         /// <param name="APITokenP">The API token of the registered API user.</param>
         /// <returns>An APIAnswerObj with its requested data.</returns>
         /// <response code="1">Request was successful and data was obtained.</response>
         /// <response code="2">Request was successful, yet no data obtained.</response>
         /// <response code="-1">An error or exception has occurred.</response>
-        /// <response code="200">Generic OK respose.</response>
+        /// <response code="200">Generic OK response.</response>
         [HttpGet]
         [Route("getAllAPIUsers")]
         [Produces("application/Json")]
-        public async Task<APIAnswerObj<List<APIUserObj>?>> getAPIUsers(string apiUserEmailP, string APITokenP)
+        public async Task<APIAnswerObj<List<APIUserObj>?>> getAPIUsers(string apiUserEmailP, string apiUserPassword, string APITokenP)
         {
 
             try
@@ -65,7 +66,7 @@ namespace AviationWEBAPI.Controllers
                 uint[] allowedRoles = [1];
 
                 if (ByteAndHexaDecimalTools.checkHexadecimalValidString(APITokenP) &&
-                    await APIAutenticationModel.authenticateAPIUsage(apiUserEmailP, APITokenP, allowedRoles)){
+                    await APIAutenticationModel.authenticateAPIUsage(apiUserEmailP, apiUserPassword, APITokenP, allowedRoles)){
 
                     List<APIUserObj>? apiUserList = await APIUserModel.getAPIUsers();
 
@@ -123,6 +124,7 @@ namespace AviationWEBAPI.Controllers
         /// 
         /// </remarks>
         /// <param name="userAPIIDP">The ID of the registered API user to look up.</param>
+        /// <param name="apiUserPassword">The password of the registered API user.</param>
         /// <param name="apiUserEmailP">The email of the requester API user.</param>
         /// <param name="APITokenP">The API Token of the requester API user.</param>
         /// <returns>An APIAnswerObj.</returns>
@@ -132,7 +134,7 @@ namespace AviationWEBAPI.Controllers
         /// <response code="200">Generic OK respose.</response>        
         [HttpGet]
         [Route("getAPIUser")]
-        public async Task<APIAnswerObj<APIUserObj?>> getAPIUser(string userAPIIDP, string apiUserEmailP, string APITokenP)
+        public async Task<APIAnswerObj<APIUserObj?>> getAPIUser(string userAPIIDP, string apiUserEmailP, string apiUserPassword, string APITokenP)
         {
 
             try
@@ -141,7 +143,7 @@ namespace AviationWEBAPI.Controllers
                 uint[] allowedRoles = [1];
 
                 if (ByteAndHexaDecimalTools.checkHexadecimalValidString(APITokenP) &&
-                    await APIAutenticationModel.authenticateAPIUsage(apiUserEmailP, APITokenP, allowedRoles))
+                    await APIAutenticationModel.authenticateAPIUsage(apiUserEmailP, apiUserPassword, APITokenP, allowedRoles))
                 {
 
                     APIUserObj? useraPI = await APIUserModel.getAPIUser(userAPIIDP);

@@ -1,4 +1,4 @@
-    create or replace package ApplicationUserPackage
+create or replace package ApplicationUserPackage
 as
 
     procedure getAllApplicationUsers(applicationUserCursorP out sys_refcursor);
@@ -59,12 +59,13 @@ as
         into userPasswordHashed
         from dual;
     
-        insert into applicationuser(userID,userEmail,userSalt,userPassword,firstName,
+        insert into applicationuser(userEmail,userSalt,userPassword,firstName,
         lastname,phoneNumber,address)
-        values(sys_guid(),lower(userEmailP),userPasswordSalt,userPasswordHashed,firstNameP,
+        values(lower(userEmailP),userPasswordSalt,userPasswordHashed,firstNameP,
         lastNameP,phoneNumberP,addressP)
         returning userid into userRegisteredIDP;
     
     end;
     
 end;
+/

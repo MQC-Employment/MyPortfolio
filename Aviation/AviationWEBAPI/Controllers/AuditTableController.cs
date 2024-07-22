@@ -48,6 +48,7 @@ namespace AviationWEBAPI.Controllers
         /// 
         /// </remarks>
         /// <param name="apiUserEmailP">The email of the registered API user.</param>
+        /// <param name="apiUserPassword">The password of the registered API user.</param>
         /// <param name="APITokenP">The API token of the registered API user.</param>
         /// <returns>An APIAnswerObj with its data.</returns>
         /// <response code="1">Request was successful and data was obtained.</response>
@@ -57,7 +58,7 @@ namespace AviationWEBAPI.Controllers
         [HttpGet]
         [Route("getAllAuditEvents")]
         [Produces("application/json")]
-        public async Task<APIAnswerObj<List<AuditTableObj>?>> getAuditEvents(string apiUserEmailP, string APITokenP)
+        public async Task<APIAnswerObj<List<AuditTableObj>?>> getAuditEvents(string apiUserEmailP, string apiUserPassword, string APITokenP)
         {
 
             try
@@ -66,7 +67,7 @@ namespace AviationWEBAPI.Controllers
                 uint[] rolesAllowedForThisMethod = [1];
 
                 if (ByteAndHexaDecimalTools.checkHexadecimalValidString(APITokenP)
-                    && await autenticationModel.authenticateAPIUsage(apiUserEmailP, APITokenP, rolesAllowedForThisMethod))
+                    && await autenticationModel.authenticateAPIUsage(apiUserEmailP, apiUserPassword, APITokenP, rolesAllowedForThisMethod))
                 {
 
                     List<AuditTableObj>? auditEventList = await auditTableModel.getAllAuditEvents();
@@ -127,6 +128,7 @@ namespace AviationWEBAPI.Controllers
         /// 
         /// </remarks>
         /// <param name="apiUserEmailP">The email of the registered API user.</param>
+        /// <param name="apiUserPassword">The password of the registered API user.</param>    
         /// <param name="APITokenP">The API token of the registered API user.</param>
         /// <param name="pageNumberP">Page number to consult. Min page number is 1.</param>
         /// <returns>And APIAnswerObj with its requested data.</returns>
@@ -137,7 +139,7 @@ namespace AviationWEBAPI.Controllers
         [HttpGet]
         [Route("getAllAuditEventsPerPage")]
         [Produces("application/json")]
-        public async Task<APIAnswerObj<List<AuditTableObj>?>> getAuditEventsPerPage(string apiUserEmailP, string APITokenP, ulong pageNumberP)
+        public async Task<APIAnswerObj<List<AuditTableObj>?>> getAuditEventsPerPage(string apiUserEmailP, string apiUserPassword, string APITokenP, ulong pageNumberP)
         {
 
             try
@@ -145,7 +147,7 @@ namespace AviationWEBAPI.Controllers
                 uint[] rolesAllowedForThisMethod = [1];
 
                 if (ByteAndHexaDecimalTools.checkHexadecimalValidString(APITokenP) && pageNumberP>=1
-                    && await autenticationModel.authenticateAPIUsage(apiUserEmailP, APITokenP, rolesAllowedForThisMethod))
+                    && await autenticationModel.authenticateAPIUsage(apiUserEmailP, apiUserPassword, APITokenP, rolesAllowedForThisMethod))
                 {
 
                     List<AuditTableObj>? auditEventList = await auditTableModel.getAuditEventsPerPage(pageNumberP);

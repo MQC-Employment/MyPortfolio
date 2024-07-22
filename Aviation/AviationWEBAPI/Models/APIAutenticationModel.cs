@@ -27,7 +27,6 @@ namespace AviationWEBAPI.Models
 
         }
 
-
         /// <summary>
         /// This methods verifies whether an API user is allowed to consume a desired API method in the controller. 
         /// - Use thi method to implement security to the API calls. It verifies whether the user is registered
@@ -39,11 +38,11 @@ namespace AviationWEBAPI.Models
         /// <param name="rolesAllowedP">The role identifiers that are required to access the method. Please, refer to 
         /// the roleIdenfier in the APIUserRole list to reference these roles. - At least one role must be met.</param>
         /// <returns>True if user is authenticated and allowed to consume the service, false if not.</returns>
-        public async Task<bool> authenticateAPIUsage(string apiUserEmailP,string userAPIKeyP, uint[] rolesAllowedP)
+        public async Task<bool> authenticateAPIUsage(string apiUserEmailP,string apiUserPassword,string userAPIKeyP, uint[] rolesAllowedP)
         {
 
             List<uint> listaOfAllowedRoles = rolesAllowedP.ToList();
-            APIUserObj? userObj = await apiUserAuthentication(apiUserEmailP,userAPIKeyP);
+            APIUserObj? userObj = await apiUsageAuthentication(apiUserEmailP,apiUserPassword,userAPIKeyP);
             
             if (userObj != null)
             {
@@ -85,10 +84,10 @@ namespace AviationWEBAPI.Models
         /// <param name="apiUserEmailP">The email of the registered AIP user.</param>
         /// <param name="userAPIKeyP">The hexadecimal API Key of the registered API user.</param>
         /// <returns>The API user if authenticated; null if not.</returns>
-        private async Task<APIUserObj?> apiUserAuthentication(string apiUserEmailP, string userAPIKeyP)
+        private async Task<APIUserObj?> apiUsageAuthentication(string apiUserEmailP, string apiUserPassword, string userAPIKeyP)
         {
 
-            const string storedProcedureName = "APIUserPackage.apiUserAuthentication";
+            const string storedProcedureName = "APIUserPackage.apiUsageAuthentication";
 
             APIUserObj? APIUserObj = new APIUserObj();
             byte[] userAPIKeyRaw = ByteAndHexaDecimalTools.convertHexadecimalStringValueToByteArray(userAPIKeyP);
@@ -99,6 +98,7 @@ namespace AviationWEBAPI.Models
 
             OracleDynamicParameters dynamicParameters = new OracleDynamicParameters();
             dynamicParameters.Add("apiUserEmailP", apiUserEmailP, OracleMappingType.Varchar2, ParameterDirection.Input);
+            dynamicParameters.Add("apiUserPasswordP", apiUserPassword, OracleMappingType.Varchar2, ParameterDirection.Input);
             dynamicParameters.Add("userAPIKeyP", userAPIKeyRaw, OracleMappingType.Raw, ParameterDirection.Input);
             dynamicParameters.Add("apiUserCursor", null, OracleMappingType.RefCursor, ParameterDirection.Output);
 
@@ -123,4 +123,4 @@ namespace AviationWEBAPI.Models
 
     } //End of class.
 
-} //End of namdespace. 
+} //End of namespace. 

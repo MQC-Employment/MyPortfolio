@@ -3,7 +3,8 @@ as
 
     procedure getAPIUsers(APIUsersCursor out sys_refcursor);
     procedure getAPIUser(userAPIIDP in raw,APIUserCursor out sys_refcursor);
-    procedure apiUserAuthentication(apiUserEmailP in APIUser.userEmail%type,
+    procedure apiUsageAuthentication(apiUserEmailP in APIUser.userEmail%type, 
+    apiUserPasswordP in APIUser.userPassword%type,
     userAPIKeyP in APIUser.userAPIKey%type, apiUserCursor out sys_refcursor);
 
 end;
@@ -34,18 +35,21 @@ as
     
     end;
     
-    procedure apiUserAuthentication(apiUserEmailP in APIUser.userEmail%type,
+    procedure apiUsageAuthentication(apiUserEmailP in APIUser.userEmail%type,
+    apiUserPasswordP in APIUser.userPassword%type,
     userAPIKeyP in APIUser.userAPIKey%type, apiUserCursor out sys_refcursor)
     as
     begin
-    
+
         open apiUserCursor for 
             select userid as "userIDbyteArray", userEmail,
             userAPIKey as "userAPIKeybyteArray"
             from apiuser
             where userEmail = apiUserEmailP and
+            userPassword = standard_hash(userSalt || apiUserPasswordP,'SHA256') and
             userAPIKey = userAPIKeyP;
     
     end;
 
 end;
+/
